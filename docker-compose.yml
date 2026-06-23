@@ -1,0 +1,12 @@
+services:
+  app:
+    container_name: github-trend-app
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    env_file: .env
+    networks: [shared_pg, caddy_net]
+    restart: unless-stopped
+networks:
+  shared_pg: { external: true }
+  caddy_net: { external: true }
