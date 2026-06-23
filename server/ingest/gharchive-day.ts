@@ -38,15 +38,26 @@ export async function ingestDay(
   async function worker() {
     while (cursor < hours.length) {
       const h = hours[cursor++];
-      const { counts, repos } = await withRetry(async () =>
-        parseHourStream(await fetchHour(day, h)));
-      for (const [id, c] of counts) {
-        const cur = allCounts.get(id);
-        allCounts.set(id, cur ? sumCounts(cur, c) : c);
+      try {
+        const { counts, repos } = await withRetry(async () =>
+          parseHourStream(await fetchHour(day, h)));
+        for (const [id, c] of counts) {
+          const cur = allCounts.get(id);
+          allCounts.set(id, cur ? sumCounts(cur, c) : c);
+        }
+        for (const [id, r] of repos) if (!allRepos.has(id)) allRepos.set(id, r);
+        filesParsed++;
+        logger.info({ stage: 'gharchive', day, hour: h, filesParsed }, 'hour parsed');
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        // GHArchive occasionally has missing/delayed hour files. Skip them rather than
+        // aborting the whole day — partial coverage is more useful than nothing.
+        if (/\b404\b/.test(msg)) {
+          logger.warn({ stage: 'gharchive', day, hour: h, err: msg }, 'hour not available, skipping');
+          continue;
+        }
+        throw err;
       }
-      for (const [id, r] of repos) if (!allRepos.has(id)) allRepos.set(id, r);
-      filesParsed++;
-      logger.info({ stage: 'gharchive', day, hour: h, filesParsed }, 'hour parsed');
     }
   }
   await Promise.all(Array.from({ length: concurrency }, worker));
