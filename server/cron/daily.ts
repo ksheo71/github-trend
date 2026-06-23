@@ -90,13 +90,6 @@ export async function runDailyIngest(opts: {
       repoId: m.id, stars: m.stars, forks: m.forks, watchers: m.stars,
     })));
 
-    // Backfill stars_delta for new repos with no prior day row (treat initial stars as gain)
-    await db.execute(sql`
-      UPDATE gh_trend.repo_daily_stats
-      SET stars_delta = stars
-      WHERE day = ${day} AND stars_delta IS NULL AND stars > 0
-    `);
-
     // 6. Aggregations
     await runAllAggregations(db, day);
 

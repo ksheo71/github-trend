@@ -4,7 +4,7 @@ import { gzipSync } from 'node:zlib';
 import { startPg } from '../helpers/pg';
 import { runDailyIngest } from '../../server/cron/daily';
 import { ingestRuns, repos, repoDailyStats, trendRepo } from '../../server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 let env: Awaited<ReturnType<typeof startPg>>;
 
@@ -27,6 +27,12 @@ function fakeHour(repoId: number, name: string) {
 
 describe('runDailyIngest', () => {
   it('marks success and writes ingest_runs row', async () => {
+    // Seed prior-day data so stars_delta (500 - 400 = 100) is computed and trend_repo is populated.
+    // Per spec §5.1, first-day observations have NULL stars_delta and are excluded from trending;
+    // only from day 2 onwards does a repo appear in trend results.
+    await env.db.insert(repos).values({ id: 101, fullName: 'octo/popular', stars: 400 });
+    await env.db.insert(repoDailyStats).values({ repoId: 101, day: '2026-06-21', stars: 400 });
+
     const result = await runDailyIngest({
       day: '2026-06-22', db: env.db,
       deps: {
@@ -49,7 +55,7 @@ describe('runDailyIngest', () => {
     const r = await env.db.select().from(repos).where(eq(repos.id, 101));
     expect(r[0].language).toBe('TypeScript');
 
-    const stats = await env.db.select().from(repoDailyStats).where(eq(repoDailyStats.repoId, 101));
+    const stats = await env.db.select().from(repoDailyStats).where(and(eq(repoDailyStats.repoId, 101), eq(repoDailyStats.day, '2026-06-22')));
     expect(stats[0].stars).toBe(500);
 
     const trend = await env.db.select().from(trendRepo).where(eq(trendRepo.repoId, 101));
