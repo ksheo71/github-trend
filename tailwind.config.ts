@@ -6,11 +6,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        accent: { DEFAULT: '#10b981', foreground: '#052e1d' },
+        accent: {
+          DEFAULT: '#10b981',
+          foreground: '#052e1d',
+          muted: '#6ee7b7',
+        },
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
+      },
+      letterSpacing: {
+        widest: '0.15em',
       },
     },
   },

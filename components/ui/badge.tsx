@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
 
 const variants = {
-  default: 'bg-zinc-800 text-zinc-200',
-  outline: 'border border-zinc-700 text-zinc-300',
-  accent: 'bg-accent text-accent-foreground',
+  default: 'text-zinc-500',
+  outline: 'border border-zinc-800 text-zinc-400',
+  accent: 'text-accent',
 } as const;
 
 export function Badge({
@@ -14,7 +14,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-md px-1.5 py-0.5 text-[11px] font-medium tabular-nums',
         variants[variant],
         className,
       )}

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Badge } from './ui/badge';
 import { LinkButton } from './ui/button';
 import type { HotRepo, Period, Sort } from '@/server/db/queries';
 import { RepoSparkline } from './repo-sparkline';
@@ -12,8 +11,8 @@ export function HotRepoList({
 }) {
   return (
     <div>
-      <div className="flex flex-wrap items-center gap-2 mb-3 text-sm">
-        <span className="text-zinc-400">정렬:</span>
+      <div className="flex flex-wrap items-center gap-1 mb-5 text-xs">
+        <span className="text-[11px] font-medium tracking-widest uppercase text-zinc-500 mr-2">정렬</span>
         {(['gain', 'stars', 'forks', 'issues'] as Sort[]).map((s) => (
           <LinkButton key={s} active={s === sort}
             href={`/?period=${period}&lang=${encodeURIComponent(lang)}&sort=${s}`}>
@@ -21,31 +20,49 @@ export function HotRepoList({
           </LinkButton>
         ))}
       </div>
-      <ol className="space-y-3">
-        {repos.map((r, idx) => (
-          <li key={r.id} className="flex gap-4 items-start p-3 rounded-md border border-zinc-800 bg-zinc-900/40">
-            <span className="text-zinc-500 font-mono text-sm w-6 text-right pt-0.5">{idx + 1}</span>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Link href={`/repo/${r.id}` as any} className="font-semibold text-zinc-100 hover:text-accent truncate">{r.fullName}</Link>
-                {r.language && <Badge variant="outline">{r.language}</Badge>}
-                {r.topics.slice(0, 4).map((t) => (
-                  <Link key={t} href={`/keyword/${encodeURIComponent(t)}` as any}>
-                    <Badge>{t}</Badge>
+      <ol className="divide-y divide-zinc-800/60">
+        {repos.map((r, idx) => {
+          const topics = r.topics.slice(0, 3);
+          return (
+            <li key={r.id} className="group py-4 first:pt-0 last:pb-0">
+              <div className="grid grid-cols-[2.5rem_1fr_auto_6rem] gap-4 items-center">
+                <span className="text-xs font-mono text-zinc-600 tabular-nums">
+                  {String(idx + 1).padStart(2, '0')}
+                </span>
+                <div className="min-w-0">
+                  <Link
+                    href={`/repo/${r.id}` as any}
+                    className="text-sm font-medium text-zinc-100 hover:text-accent transition-colors truncate block"
+                  >
+                    {r.fullName}
                   </Link>
-                ))}
+                  <div className="mt-1 text-xs text-zinc-500 truncate">
+                    {r.language && <span>{r.language}</span>}
+                    {r.language && topics.length > 0 && <span className="text-zinc-700"> · </span>}
+                    {topics.map((t, i) => (
+                      <span key={t}>
+                        {i > 0 && <span className="text-zinc-700"> · </span>}
+                        <Link
+                          href={`/keyword/${encodeURIComponent(t)}` as any}
+                          className="hover:text-zinc-300 transition-colors"
+                        >
+                          {t}
+                        </Link>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="text-right font-mono text-xs tabular-nums leading-tight">
+                  <div className="text-zinc-300">★ {r.stars.toLocaleString()}</div>
+                  <div className="text-accent mt-0.5">+{r.starGain.toLocaleString()}</div>
+                </div>
+                <div className="flex justify-end">
+                  <RepoSparkline data={sparklines.get(r.id) ?? []} />
+                </div>
               </div>
-              {r.description && <p className="text-sm text-zinc-400 mt-1 line-clamp-2">{r.description}</p>}
-              <div className="flex items-center gap-3 text-xs text-zinc-500 mt-2">
-                <span>★ {r.stars.toLocaleString()}</span>
-                <span className="text-accent">+{r.starGain.toLocaleString()}</span>
-                <span>fork {r.forks.toLocaleString()}</span>
-                <span>issue {r.openIssues.toLocaleString()}</span>
-              </div>
-            </div>
-            <RepoSparkline data={sparklines.get(r.id) ?? []} />
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ol>
     </div>
   );

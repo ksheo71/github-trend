@@ -32,9 +32,14 @@ export default async function KeywordPage({ params }: { params: Promise<{ name: 
   const sparklines = new Map<number, { day: string; stars: number }[]>();
   await Promise.all(repos.map(async (r) => sparklines.set(r.id, await queryRepoTimeseries(db, r.id, 30))));
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">#{keyword}</h1>
-      <p className="text-zinc-400 text-sm">최근 1주 핫 레포 중 이 토픽을 가진 레포</p>
+    <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      <header className="space-y-2">
+        <p className="text-[11px] font-medium tracking-widest uppercase text-zinc-500">keyword</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-zinc-50">
+          <span className="text-zinc-600">#</span>{keyword}
+        </h1>
+        <p className="text-sm text-zinc-500">최근 1주 핫 레포 중 이 토픽을 가진 레포</p>
+      </header>
       <HotRepoList repos={repos} period="week" lang="ALL" sort="gain" sparklines={sparklines} />
     </main>
   );

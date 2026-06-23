@@ -17,9 +17,12 @@ export default async function Trending({ searchParams }: { searchParams: Promise
   const sparklines = new Map<number, { day: string; stars: number }[]>();
   await Promise.all(repos.map(async (r) => sparklines.set(r.id, await queryRepoTimeseries(db, r.id, 30))));
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8 space-y-6">
-      <header className="flex items-center justify-between flex-wrap gap-3">
-        <h1 className="text-2xl font-bold tracking-tight">Trending Top 100</h1>
+    <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
+      <header className="flex items-end justify-between flex-wrap gap-4">
+        <div className="space-y-2">
+          <p className="text-[11px] font-medium tracking-widest uppercase text-zinc-500">trending</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-50">Top 100</h1>
+        </div>
         <PeriodTabs current={period} basePath="/trending" />
       </header>
       <HotRepoList repos={repos} period={period} lang={lang} sort={sort} sparklines={sparklines} />

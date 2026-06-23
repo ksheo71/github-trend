@@ -1,22 +1,30 @@
-'use client';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
+type Row = { language: string; hotRepoCount: number; totalStarsGained: number };
 
-const COLORS = ['#10b981', '#6366f1', '#f59e0b', '#ec4899', '#14b8a6', '#8b5cf6', '#22d3ee', '#f472b6', '#84cc16', '#f97316'];
-
-export function LanguageBreakdown({ data }: {
-  data: { language: string; hotRepoCount: number; totalStarsGained: number }[];
-}) {
+export function LanguageBreakdown({ data }: { data: Row[] }) {
   if (data.length === 0) return <p className="text-zinc-500 text-sm">데이터 없음</p>;
+  const max = Math.max(...data.map((d) => d.hotRepoCount));
+  const total = data.reduce((s, d) => s + d.hotRepoCount, 0);
   return (
-    <div className="h-64">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart>
-          <Pie data={data} dataKey="hotRepoCount" nameKey="language" innerRadius={60} outerRadius={90} strokeWidth={0}>
-            {data.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-          </Pie>
-          <Tooltip contentStyle={{ background: '#18181b', border: '1px solid #27272a', borderRadius: 6 }} />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+    <ul className="space-y-2.5">
+      {data.map((d) => {
+        const pct = max ? (d.hotRepoCount / max) * 100 : 0;
+        const share = total ? Math.round((d.hotRepoCount / total) * 100) : 0;
+        return (
+          <li key={d.language} className="grid grid-cols-[5.5rem_1fr_3.5rem] items-center gap-3">
+            <span className="text-sm text-zinc-100 truncate">{d.language}</span>
+            <div className="h-1.5 rounded-full bg-zinc-900 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-accent to-accent-muted"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <span className="text-xs font-mono text-zinc-500 text-right tabular-nums">
+              {d.hotRepoCount}
+              <span className="text-zinc-700"> · {share}%</span>
+            </span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

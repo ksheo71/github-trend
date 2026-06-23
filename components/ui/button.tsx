@@ -16,10 +16,10 @@ export function LinkButton({
     <Link
       href={href as any}
       className={cn(
-        'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
+        'px-2.5 py-1 rounded-[5px] text-xs font-medium transition-colors duration-150',
         active
-          ? 'bg-zinc-100 text-zinc-900'
-          : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800',
+          ? 'bg-zinc-100 text-zinc-900 shadow-sm'
+          : 'text-zinc-400 hover:text-zinc-100',
         className,
       )}
     >

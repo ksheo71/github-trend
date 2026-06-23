@@ -8,7 +8,7 @@ export function Tabs({
   current: string;
 }) {
   return (
-    <div className="inline-flex items-center gap-1 rounded-md bg-zinc-900 p-1 border border-zinc-800">
+    <div className="inline-flex items-center gap-0.5 rounded-md bg-zinc-900 p-0.5 border border-zinc-800">
       {items.map((it) => (
         <LinkButton key={it.value} href={it.href} active={it.value === current}>
           {it.label}
