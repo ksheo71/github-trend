@@ -52,15 +52,15 @@ export async function ingestDay(
   await Promise.all(Array.from({ length: concurrency }, worker));
 
   await db.transaction(async (tx) => {
-    if (allRepos.size > 0) {
+    for (const rc of chunk([...allRepos.values()], INSERT_CHUNK)) {
       await tx.execute(sql`
         INSERT INTO gh_trend.repos (id, full_name)
-        VALUES ${sql.join([...allRepos.values()].map((r) => sql`(${r.id}, ${r.fullName})`), sql`, `)}
+        VALUES ${sql.join(rc.map((r) => sql`(${r.id}, ${r.fullName})`), sql`, `)}
         ON CONFLICT (id) DO NOTHING
       `);
     }
-    if (allCounts.size > 0) {
-      const values = [...allCounts.entries()].map(([id, c]) => sql`(
+    for (const ec of chunk([...allCounts.entries()], INSERT_CHUNK)) {
+      const values = ec.map(([id, c]) => sql`(
         ${day}, ${id}, ${c.watchEvents}, ${c.forkEvents}, ${c.pushEvents}, ${c.prEvents}, ${c.issueEvents}
       )`);
       await tx.execute(sql`
@@ -79,6 +79,16 @@ export async function ingestDay(
   let totalEvents = 0;
   for (const c of allCounts.values()) totalEvents += c.watchEvents + c.forkEvents + c.pushEvents + c.prEvents + c.issueEvents;
   return { filesParsed, reposTouched: allRepos.size, events: totalEvents };
+}
+
+// Chunked INSERTs avoid Drizzle's recursive sql.join blowing the stack on large batches
+// (24h of GHArchive can produce 100k+ event rows).
+const INSERT_CHUNK = 500;
+
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
 }
 
 function sumCounts(a: EventCounts, b: EventCounts): EventCounts {
