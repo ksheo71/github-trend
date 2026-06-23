@@ -3,11 +3,7 @@ import { db } from '../db/client';
 import { logger } from '../logger';
 import { runDailyIngest } from './daily';
 import { utcDayBefore } from '../ingest/time';
-
-// notifyFailure will be wired in Task 14; for now, log only
-async function notifyFailure(day: string, msg: string) {
-  logger.error({ day, msg }, 'ingest failed (notifyFailure placeholder)');
-}
+import { notifyFailure } from '../notify/discord';
 
 let registered = false;
 
