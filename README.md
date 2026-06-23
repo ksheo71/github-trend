@@ -35,11 +35,12 @@ npm test
 
 ## 운영 (Mac mini)
 
-전제: 공용 Postgres가 `shared_pg` docker network에, Caddy가 `caddy_net` docker network에 이미 떠 있음. Cloudflare Tunnel이 `*.myazit.kr → Caddy`로 라우팅 중.
+전제: 공용 Postgres가 `db_shared` docker network에, Caddy가 `edge_shared` docker network에 이미 떠 있음. Cloudflare Tunnel이 `*.myazit.kr → Caddy`로 라우팅 중.
 
-1. 공용 Postgres에서 한 번:
+1. 공용 Postgres에서 한 번 — 전용 사용자와 DB를 만들어 격리:
    ```sql
-   CREATE SCHEMA IF NOT EXISTS gh_trend;
+   CREATE USER gh_trend WITH PASSWORD '<강한-비밀번호>';
+   CREATE DATABASE gh_trend OWNER gh_trend;
    ```
 
 2. `.env`를 같은 폴더에 두고:

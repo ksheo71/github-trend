@@ -4,9 +4,11 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+      args:
+        DATABASE_URL: postgres://build:build@localhost:5432/build
     env_file: .env
-    networks: [shared_pg, caddy_net]
+    networks: [db_shared, edge_shared]
     restart: unless-stopped
 networks:
-  shared_pg: { external: true }
-  caddy_net: { external: true }
+  db_shared: { external: true }
+  edge_shared: { external: true }
