@@ -20,6 +20,11 @@ npm run dev            # http://localhost:3000
 npm run ingest -- --day 2026-06-22
 ```
 
+수동으로 같은 날을 다시 집계하려면 `--force`를 추가하세요:
+```bash
+docker compose exec app node --experimental-strip-types scripts/ingest.ts --day 2026-06-22 --force
+```
+
 ## 테스트
 
 Docker가 켜져 있어야 합니다 (Testcontainers).

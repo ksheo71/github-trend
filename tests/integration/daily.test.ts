@@ -77,4 +77,23 @@ describe('runDailyIngest', () => {
     const second = await runDailyIngest({ day: '2026-06-22', db: env.db, deps });
     expect(second.status).toBe('skipped');
   });
+
+  it('force re-runs a previously successful day', async () => {
+    const deps = {
+      fetchHourStream: async () => fakeHour(101, 'octo/popular'),
+      fetchRepo: async () => ({
+        id: 101, fullName: 'octo/popular', description: null,
+        language: 'TypeScript', topics: [],
+        homepage: null, license: null,
+        stars: 100, forks: 0, openIssues: 0,
+        createdAt: new Date(), pushedAt: null,
+      }),
+    };
+    await runDailyIngest({ day: '2026-06-22', db: env.db, deps });
+    const second = await runDailyIngest({ day: '2026-06-22', db: env.db, force: true, deps });
+    expect(second.status).toBe('success');
+
+    const runs = await env.db.select().from(ingestRuns);
+    expect(runs).toHaveLength(1);   // prior row deleted, only the new one remains
+  });
 });

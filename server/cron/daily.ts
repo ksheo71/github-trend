@@ -19,9 +19,10 @@ const RETENTION_DAYS = 35;
 export async function runDailyIngest(opts: {
   day: string;
   db: DB;
+  force?: boolean;
   deps?: Partial<Deps>;
 }): Promise<{ status: 'success' | 'failed' | 'skipped'; stats: Record<string, unknown> }> {
-  const { day, db } = opts;
+  const { day, db, force } = opts;
   const deps: Deps = {
     fetchHourStream: opts.deps?.fetchHourStream ?? defaultFetchHourStream,
     fetchRepo: opts.deps?.fetchRepo ?? ((name) => defaultFetchRepo(name)),
@@ -31,8 +32,12 @@ export async function runDailyIngest(opts: {
   const existing = await db.select().from(ingestRuns).where(eq(ingestRuns.day, day));
   const finished = existing.find((r) => r.status === 'success');
   if (finished) {
-    logger.info({ day }, 'already finished, skipping');
-    return { status: 'skipped', stats: { reason: 'already-success' } };
+    if (!force) {
+      logger.info({ day }, 'already finished, skipping');
+      return { status: 'skipped', stats: { reason: 'already-success' } };
+    }
+    logger.info({ day }, 'force re-run: deleting existing ingest_runs rows for day');
+    await db.delete(ingestRuns).where(eq(ingestRuns.day, day));
   }
   const [run] = await db.insert(ingestRuns).values({ day, status: 'running' }).returning();
 
