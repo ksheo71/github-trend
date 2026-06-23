@@ -12,13 +12,13 @@ export function KeywordCloud({ items }: { items: KeywordCard[] }) {
           <li key={k.keyword}>
             <Link
               href={`/keyword/${encodeURIComponent(k.keyword)}` as any}
-              className="group grid grid-cols-[1fr_8rem_4rem] items-center gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-zinc-900/60"
+              className="group grid grid-cols-[1fr_8rem_4rem] items-center gap-3 px-2 py-1.5 rounded-md transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-900/60"
             >
-              <span className="text-sm font-medium text-zinc-100 truncate">
-                <span className="text-zinc-600">#</span>
+              <span className="text-sm font-medium text-zinc-800 dark:text-zinc-100 truncate">
+                <span className="text-zinc-400 dark:text-zinc-600">#</span>
                 {k.keyword}
               </span>
-              <span className="h-1 rounded-full bg-zinc-900 overflow-hidden">
+              <span className="h-1 rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
                 <span
                   className="block h-full rounded-full bg-accent/80 group-hover:bg-accent transition-colors"
                   style={{ width: `${pct}%` }}

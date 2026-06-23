@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import { db } from '@/server/db/client';
 import { queryRepoTimeseries, type HotRepo } from '@/server/db/queries';
 import { HotRepoList } from '@/components/hot-repo-list';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export const revalidate = 600;
 
@@ -33,12 +34,15 @@ export default async function KeywordPage({ params }: { params: Promise<{ name: 
   await Promise.all(repos.map(async (r) => sparklines.set(r.id, await queryRepoTimeseries(db, r.id, 30))));
   return (
     <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
-      <header className="space-y-2">
-        <p className="text-[11px] font-medium tracking-widest uppercase text-zinc-500">keyword</p>
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-50">
-          <span className="text-zinc-600">#</span>{keyword}
-        </h1>
-        <p className="text-sm text-zinc-500">최근 1주 핫 레포 중 이 토픽을 가진 레포</p>
+      <header className="flex items-end justify-between flex-wrap gap-4">
+        <div className="space-y-2">
+          <p className="text-[11px] font-medium tracking-widest uppercase text-zinc-500">keyword</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            <span className="text-zinc-400 dark:text-zinc-600">#</span>{keyword}
+          </h1>
+          <p className="text-sm text-zinc-500">최근 1주 핫 레포 중 이 토픽을 가진 레포</p>
+        </div>
+        <ThemeToggle />
       </header>
       <HotRepoList repos={repos} period="week" lang="ALL" sort="gain" sparklines={sparklines} />
     </main>

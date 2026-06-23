@@ -11,8 +11,8 @@ export function LanguageBreakdown({ data }: { data: Row[] }) {
         const share = total ? Math.round((d.hotRepoCount / total) * 100) : 0;
         return (
           <li key={d.language} className="grid grid-cols-[5.5rem_1fr_3.5rem] items-center gap-3">
-            <span className="text-sm text-zinc-100 truncate">{d.language}</span>
-            <div className="h-1.5 rounded-full bg-zinc-900 overflow-hidden">
+            <span className="text-sm text-zinc-800 dark:text-zinc-100 truncate">{d.language}</span>
+            <div className="h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-accent to-accent-muted"
                 style={{ width: `${pct}%` }}
@@ -20,7 +20,7 @@ export function LanguageBreakdown({ data }: { data: Row[] }) {
             </div>
             <span className="text-xs font-mono text-zinc-500 text-right tabular-nums">
               {d.hotRepoCount}
-              <span className="text-zinc-700"> · {share}%</span>
+              <span className="text-zinc-300 dark:text-zinc-700"> · {share}%</span>
             </span>
           </li>
         );

@@ -2,6 +2,7 @@ import { db } from '@/server/db/client';
 import { queryHotRepos, queryRepoTimeseries, type Period, type Sort } from '@/server/db/queries';
 import { PeriodTabs } from '@/components/period-tabs';
 import { HotRepoList } from '@/components/hot-repo-list';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export const revalidate = 600;
 
@@ -21,9 +22,12 @@ export default async function Trending({ searchParams }: { searchParams: Promise
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div className="space-y-2">
           <p className="text-[11px] font-medium tracking-widest uppercase text-zinc-500">trending</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-50">Top 100</h1>
+          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">Top 100</h1>
         </div>
-        <PeriodTabs current={period} basePath="/trending" />
+        <div className="flex items-center gap-2">
+          <PeriodTabs current={period} basePath="/trending" />
+          <ThemeToggle />
+        </div>
       </header>
       <HotRepoList repos={repos} period={period} lang={lang} sort={sort} sparklines={sparklines} />
     </main>

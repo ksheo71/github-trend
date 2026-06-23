@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 
 const variants = {
   default: 'text-zinc-500',
-  outline: 'border border-zinc-800 text-zinc-400',
+  outline: 'border border-zinc-200 text-zinc-600 dark:border-zinc-800 dark:text-zinc-400',
   accent: 'text-accent',
 } as const;
 

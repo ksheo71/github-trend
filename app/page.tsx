@@ -11,6 +11,7 @@ import { LanguageBreakdown } from '@/components/language-breakdown';
 import { KeywordCloud } from '@/components/keyword-cloud';
 import { HotRepoList } from '@/components/hot-repo-list';
 import { StaleBanner } from '@/components/stale-banner';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export const revalidate = 600;
 
@@ -43,7 +44,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
       <main className="max-w-6xl mx-auto px-6 py-12 space-y-10">
         <header className="flex items-end justify-between flex-wrap gap-4">
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-zinc-50">GitHub Trend</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">GitHub Trend</h1>
             {updated && (
               <p className="text-xs text-zinc-500 flex items-center gap-2">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-accent" />
@@ -51,7 +52,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
               </p>
             )}
           </div>
-          <PeriodTabs current={period} basePath="/" />
+          <div className="flex items-center gap-2">
+            <PeriodTabs current={period} basePath="/" />
+            <ThemeToggle />
+          </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -70,7 +74,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
             <CardTitle>핫 레포 · {period}</CardTitle>
             <Link
               href={`/trending?period=${period}` as any}
-              className="text-[11px] font-medium tracking-widest uppercase text-zinc-500 hover:text-zinc-300 transition-colors"
+              className="text-[11px] font-medium tracking-widest uppercase text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300 transition-colors"
             >
               top 100 →
             </Link>
@@ -80,11 +84,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
           </CardContent>
         </Card>
 
-        <footer className="pt-4 flex items-center justify-between text-xs text-zinc-600">
+        <footer className="pt-4 flex items-center justify-between text-xs text-zinc-400 dark:text-zinc-600">
           <span>github-trend · daily snapshot</span>
           <a
             href="https://github.com/ksheo71/github-trend"
-            className="hover:text-zinc-400 transition-colors"
+            className="hover:text-zinc-600 dark:hover:text-zinc-400 transition-colors"
             target="_blank"
             rel="noreferrer"
           >

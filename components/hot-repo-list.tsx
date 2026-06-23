@@ -20,31 +20,31 @@ export function HotRepoList({
           </LinkButton>
         ))}
       </div>
-      <ol className="divide-y divide-zinc-800/60">
+      <ol className="divide-y divide-zinc-200 dark:divide-zinc-800/60">
         {repos.map((r, idx) => {
           const topics = r.topics.slice(0, 3);
           return (
             <li key={r.id} className="group py-4 first:pt-0 last:pb-0">
               <div className="grid grid-cols-[2.5rem_1fr_auto_6rem] gap-4 items-center">
-                <span className="text-xs font-mono text-zinc-600 tabular-nums">
+                <span className="text-xs font-mono text-zinc-400 dark:text-zinc-600 tabular-nums">
                   {String(idx + 1).padStart(2, '0')}
                 </span>
                 <div className="min-w-0">
                   <Link
                     href={`/repo/${r.id}` as any}
-                    className="text-sm font-medium text-zinc-100 hover:text-accent transition-colors truncate block"
+                    className="text-sm font-medium text-zinc-900 dark:text-zinc-100 hover:text-accent dark:hover:text-accent transition-colors truncate block"
                   >
                     {r.fullName}
                   </Link>
                   <div className="mt-1 text-xs text-zinc-500 truncate">
                     {r.language && <span>{r.language}</span>}
-                    {r.language && topics.length > 0 && <span className="text-zinc-700"> · </span>}
+                    {r.language && topics.length > 0 && <span className="text-zinc-300 dark:text-zinc-700"> · </span>}
                     {topics.map((t, i) => (
                       <span key={t}>
-                        {i > 0 && <span className="text-zinc-700"> · </span>}
+                        {i > 0 && <span className="text-zinc-300 dark:text-zinc-700"> · </span>}
                         <Link
                           href={`/keyword/${encodeURIComponent(t)}` as any}
-                          className="hover:text-zinc-300 transition-colors"
+                          className="hover:text-zinc-800 dark:hover:text-zinc-300 transition-colors"
                         >
                           {t}
                         </Link>
@@ -53,7 +53,7 @@ export function HotRepoList({
                   </div>
                 </div>
                 <div className="text-right font-mono text-xs tabular-nums leading-tight">
-                  <div className="text-zinc-300">★ {r.stars.toLocaleString()}</div>
+                  <div className="text-zinc-700 dark:text-zinc-300">★ {r.stars.toLocaleString()}</div>
                   <div className="text-accent mt-0.5">+{r.starGain.toLocaleString()}</div>
                 </div>
                 <div className="flex justify-end">

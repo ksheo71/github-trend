@@ -18,8 +18,8 @@ export function LinkButton({
       className={cn(
         'px-2.5 py-1 rounded-[5px] text-xs font-medium transition-colors duration-150',
         active
-          ? 'bg-zinc-100 text-zinc-900 shadow-sm'
-          : 'text-zinc-400 hover:text-zinc-100',
+          ? 'bg-zinc-900 text-zinc-50 shadow-sm dark:bg-zinc-100 dark:text-zinc-900'
+          : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100',
         className,
       )}
     >
