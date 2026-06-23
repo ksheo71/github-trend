@@ -205,7 +205,7 @@ LIMIT 100;
 
 - 'week'/'month'는 7일/30일 합산 (`SUM(stars_delta)`)
 - 언어별: 같은 쿼리를 `WHERE language=:lang`으로. 'ALL' + 상위 10개 언어
-- 신규(어제 첫 관측) 레포는 `stars_delta = NULL`이라 자동 제외
+- 신규(어제 첫 관측) 레포는 `stars_delta = NULL`이라 첫날 랭킹에서 자동 제외됨. 둘째 날부터 정상 집계되어 트렌드에 노출 — 즉 "막 나온 레포"는 1일 지연. 트렌드 대시보드로서는 허용 가능한 트레이드오프
 
 ### 5.2 키워드 추세 (`trend_keyword`)
 
@@ -213,12 +213,18 @@ LIMIT 100;
 
 **스탑워드**: `awesome`, `tutorial`, `learning`, `example`, `boilerplate`, `template`, `starter` + 언어명(python/javascript/typescript/rust/go/cpp/…). 코드 상수로 관리.
 
+**"직전 동일 기간" 정의**
+- `day` → 그제 단일 일자 (today − 2day)
+- `week` → 14~7일 전 7일 구간
+- `month` → 60~30일 전 30일 구간
+
 **알고리즘**:
 1. period별 핫 후보 = `trend_repo` (period, 'ALL') 상위 200개
-2. 후보의 topics 평탄화 → 빈도 카운트
-3. 직전 동일 기간 결과와 비교, `delta_pct = (now − prev) / max(1, prev) × 100`
-4. `mentions ≥ 3 AND delta_pct ≥ 10%`만 INSERT
-5. `sample_repo_ids` = 해당 키워드 보유 후보 중 star_gain 상위 5
+2. 후보의 topics 평탄화 → 빈도 카운트 = `now_count`
+3. 동일 로직을 위 정의의 직전 기간에 적용 → `prev_count`
+4. `delta_pct = (now_count − prev_count) / max(1, prev_count) × 100`
+5. `mentions ≥ 3 AND delta_pct ≥ 10%`만 INSERT
+6. `sample_repo_ids` = 해당 키워드 보유 후보 중 star_gain 상위 5
 
 ### 5.3 언어 점유율 (`trend_language`)
 
