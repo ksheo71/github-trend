@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { db, pool } from '../server/db/client';
 import { runDailyIngest } from '../server/cron/daily';
 import { utcDayBefore } from '../server/ingest/time';
