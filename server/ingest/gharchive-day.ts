@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { sql } from 'drizzle-orm';
 import type { DB } from '../db/client';
 import { parseHourStream, type EventCounts, type RepoTouch } from './gharchive';
@@ -9,8 +10,9 @@ export const defaultFetchHourStream: FetchHourStream = async (day, hour) => {
   const url = `https://data.gharchive.org/${day}-${hour}.json.gz`;
   const res = await fetch(url);
   if (!res.ok || !res.body) throw new Error(`fetch ${url} ${res.status}`);
-  // node 22 supports Web stream → Node stream
-  const { Readable } = await import('node:stream');
+  // node 22 supports Web stream → Node stream. Use a top-level import — when this
+  // module is loaded from the Next standalone chunk, the dynamic `await import('node:stream')`
+  // can resolve to undefined and crash `Readable.fromWeb` at runtime.
   return Readable.fromWeb(res.body as any);
 };
 
